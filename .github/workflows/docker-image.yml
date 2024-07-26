@@ -1,0 +1,109 @@
+name: Build and Push Docker Image 
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to dataos Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME_DATAOS }} -p ${{ secrets.DOCKER_PASSWORD_DATAOS }}
+
+      - name: Pull Docker image
+        run: docker pull rubiklabs/dataos-ctl:2.10.9-dev
+
+      - name: Run Docker container
+        run: docker run rubiklabs/dataos-ctl:2.10.9-dev
+
+      - name: Find YAML file
+        run: |
+          file=$(find . -name "cluster.yaml" -printf "%P\n" -quit)
+          echo "Found file: $file"
+          echo "file=$file" >> $GITHUB_ENV
+
+      - name: Delete resources
+        id: delete-resources
+        run: |
+          echo "Deleting resources using file: $file"
+          docker run --rm -i \
+            -v $GITHUB_WORKSPACE/.dataos:/dataos \
+            -v $GITHUB_WORKSPACE:/jobsfolder \
+            -e DATAOS_CONFIG_DIRECTORY=/dataos \
+            -e USER_ID=$USER_ID \
+            -e DATAOS_PRIME_APIKEY=$DATAOS_PRIME_APIKEY \
+            -e LICENSE_KEY=$LICENSE_KEY \
+            -e LICENSE_ORGANIZATION_ID=$LICENSE_ORGANIZATION_ID \
+            -e DATAOS_FQDN=liberal-donkey.dataos.app \
+            -e APIKEY=$APIKEY \
+            rubiklabs/dataos-ctl:2.10.9-dev delete -f /jobsfolder/$file
+        continue-on-error: true
+
+      - name: Check delete result
+        if: steps.delete-resources.outcome == 'failure'
+        run: |
+          echo "Initial delete failed. Waiting for 30 seconds and retrying..."
+          sleep 30
+          echo "Retrying delete..."
+          docker run --rm -i \
+            -v $GITHUB_WORKSPACE/.dataos:/dataos \
+            -v $GITHUB_WORKSPACE:/jobsfolder \
+            -e DATAOS_CONFIG_DIRECTORY=/dataos \
+            -e USER_ID=$USER_ID \
+            -e DATAOS_PRIME_APIKEY=$DATAOS_PRIME_APIKEY \
+            -e LICENSE_KEY=$LICENSE_KEY \
+            -e LICENSE_ORGANIZATION_ID=$LICENSE_ORGANIZATION_ID \
+            -e DATAOS_FQDN=liberal-donkey.dataos.app \
+            -e APIKEY=$APIKEY \
+            rubiklabs/dataos-ctl:2.10.9-dev delete -f /jobsfolder/$file
+
+      - name: Apply configuration
+        run: |
+          docker run --rm -i \
+            -v $GITHUB_WORKSPACE/.dataos:/dataos \
+            -v $GITHUB_WORKSPACE:/jobsfolder \
+            -e DATAOS_CONFIG_DIRECTORY=/dataos \
+            -e USER_ID=$USER_ID \
+            -e DATAOS_PRIME_APIKEY=$DATAOS_PRIME_APIKEY \
+            -e LICENSE_KEY=$LICENSE_KEY \
+            -e LICENSE_ORGANIZATION_ID=$LICENSE_ORGANIZATION_ID \
+            -e DATAOS_FQDN=liberal-donkey.dataos.app \
+            -e APIKEY=$APIKEY \
+            rubiklabs/dataos-ctl:2.10.9-dev apply -f /jobsfolder/$file -l
+
+      - name: Apply configuration without logging
+        run: |
+          docker run --rm -i \
+            -v $GITHUB_WORKSPACE/.dataos:/dataos \
+            -v $GITHUB_WORKSPACE:/jobsfolder \
+            -e DATAOS_CONFIG_DIRECTORY=/dataos \
+            -e USER_ID=$USER_ID \
+            -e DATAOS_PRIME_APIKEY=$DATAOS_PRIME_APIKEY \
+            -e LICENSE_KEY=$LICENSE_KEY \
+            -e LICENSE_ORGANIZATION_ID=$LICENSE_ORGANIZATION_ID \
+            -e DATAOS_FQDN=liberal-donkey.dataos.app \
+            -e APIKEY=$APIKEY \
+            rubiklabs/dataos-ctl:2.10.9-dev apply -f /jobsfolder/$file
+
+    env:
+      USER_ID: ${{ secrets.USER_ID }}
+      DATAOS_PRIME_APIKEY: ${{ secrets.DATAOS_PRIME_APIKEY }}
+      LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+      LICENSE_ORGANIZATION_ID: ${{ secrets.LICENSE_ORGANIZATION_ID }}
+      APIKEY: ${{ secrets.APIKEY }}
+      DOCKER_USERNAME_DATAOS: ${{ secrets.DOCKER_USERNAME_DATAOS }}
+      DOCKER_PASSWORD_DATAOS: ${{ secrets.DOCKER_PASSWORD_DATAOS }}
+
+    services:
+      docker:
+        image: docker:stable
+        options: --privileged  # Required for Docker-in-Docker
