@@ -1,0 +1,9 @@
+contexts:
+    current_context_name: donkey
+    context_list:
+        - name: Sgws-stg
+        - name: sgws-prod
+        - name: maggot
+        - name: hawk
+        - name: mammoth
+        - name: donkey
