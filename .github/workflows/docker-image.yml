@@ -36,6 +36,7 @@ jobs:
         run: |
           AUTHOR_NAME=$(git log -1 --pretty=format:'%ae')
           echo "::set-output name=author::$AUTHOR_NAME"
+          echo "$AUTHOR_NAME"
 
       - name: Map API Key
         id: map-api-key
