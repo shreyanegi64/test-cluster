@@ -52,8 +52,8 @@ jobs:
 
       - name: Debug Environment Variables
         run: |
-          echo "API_KEY: ${{ env.api_key }}"
-          echo "Username: ${{ env.username }}"
+          echo "API_KEY: ${{ env.DEEPAK_API_KEY }}"
+          echo "Username: ${{ env.DEEPAK_USERNAME }}"
 
       # - name: Dataos Login
       #   id: login
