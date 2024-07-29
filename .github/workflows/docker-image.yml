@@ -57,15 +57,17 @@ jobs:
       #       echo "api_key=${{ secrets.YOGESH_API_KEY }}" >> $GITHUB_ENV
       #       echo "username=${{ secrets.YOGESH_USERNAME }}" >> $GITHUB_ENV
 
-      #     else
-      #       echo "Commit author does not match any known members."
-      #       exit 1
-      #     fi
+          else
+            echo "Commit author does not match any known members."
+            exit 1
+          fi
 
-      # - name: Debug Environment Variables
-      #   run: |
-      #     echo "API Key: ${{ env.api_key }}"
-      #     echo "Username: ${{ env.username }}"
+      - name: Debug Environment Variables
+        run: |
+          echo "API_key=${{ env.api_key }}" >> $GITHUB_ENV
+          echo "Username=${{ env.username }}" >> $GITHUB_ENV
+          echo "$API_key"
+          echo "$Username"
 
       # - name: Dataos Login
       #   id: login
