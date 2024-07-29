@@ -1,7 +1,6 @@
 version: v1
 name: clustertest0020
 type: cluster
-owner : deepakjaiswal
 cluster:
   compute: query-default
   minerva:
