@@ -1,4 +1,4 @@
-name: Print Commit Usernames
+name: Deploy Streamlit App
 
 on:
   push:
@@ -6,23 +6,16 @@ on:
       - main # or your default branch
 
 jobs:
-  print_usernames:
+  deploy:
     runs-on: ubuntu-latest
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Get commit usernames
+    - name: Get commit author
+      id: get_author
       run: |
-        echo "Fetching commit usernames..."
-        # Get the list of commits
-        commits=$(git log --format='%H' -n 10)  # Adjust the number as needed
-        
-        # Loop through each commit hash
-        for commit in $commits
-        do
-          # Get the username for the commit
-          username=$(git log --format='%an' -n 1 $commit)
-          echo "Commit $commit was made by $username"
-        done
+        commit_author=$(git log -1 --format='%an')
+        echo "Commit author is $commit_author"
+        echo "author=$commit_author" >> $GITHUB_ENV
