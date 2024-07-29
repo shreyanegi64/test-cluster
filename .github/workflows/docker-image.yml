@@ -52,10 +52,8 @@ jobs:
 
       - name: Debug Environment Variables
         run: |
-          echo "API_key=${{ env.api_key }}" >> $GITHUB_ENV
-          echo "Username=${{ env.username }}" >> $GITHUB_ENV
-          echo "$API_key"
-          echo "$Username"
+          echo "API_KEY: ${{ env.api_key }}"
+          echo "Username: ${{ env.username }}"
 
       # - name: Dataos Login
       #   id: login
