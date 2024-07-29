@@ -35,24 +35,28 @@ jobs:
         id: get-author
         run: |
           AUTHOR_NAME=$(git log -1 --pretty=format:'%ae')
-          echo "::set-output name=author::$AUTHOR_NAME"
+          echo "AUTHOR_NAME=$AUTHOR_NAME" >> $GITHUB_ENV
           echo "$AUTHOR_NAME"
 
       - name: Map API Key
         id: map-api-key
         run: |
-          if [ "${{ steps.get-author.outputs.author }}" == "deepak.jaiswal@tmdc.io" ]; then
-            echo "::set-output name=api_key::${{ secrets.DEEPAK_API_KEY }}"
-            echo "::set-output name=username::${{ secrets.DEEPAK_USERNAME }}"
-          elif [ "${{ steps.get-author.outputs.author }}" == "shreya.negi@tmdc.io" ]; then
-            echo "::set-output name=api_key::${{ secrets.SHREYA_API_KEY }}"
-            echo "::set-output name=username::${{ secrets.SHREYA_USERNAME }}"
-          elif [ "${{ steps.get-author.outputs.author }}" == "yash.rathore@tmdc.io" ]; then
-            echo "::set-output name=api_key::${{ secrets.YASH_API_KEY }}"
-            echo "::set-output name=username::${{ secrets.YASH_USERNAME }}"
-          elif [ "${{ steps.get-author.outputs.author }}" == "yogesh.khangode@tmdc.io" ]; then
-            echo "::set-output name=api_key::${{ secrets.YOGESH_API_KEY }}"
-            echo "::set-output name=username::${{ secrets.YOGESH_USERNAME }}"
+          if [ "${{ env.AUTHOR_NAME }}" == "deepak.jaiswal@tmdc.io" ]; then
+            echo "api_key=${{ secrets.DEEPAK_API_KEY }}" >> $GITHUB_ENV
+            echo "username=${{ secrets.DEEPAK_USERNAME }}" >> $GITHUB_ENV
+
+          elif [ "${{ env.AUTHOR_NAME }}" == "shreya.negi@tmdc.io" ]; then
+            echo "api_key=${{ secrets.SHREYA_API_KEY }}" >> $GITHUB_ENV
+            echo "username=${{ secrets.SHREYA_USERNAME }}" >> $GITHUB_ENV
+
+          elif [ "${{ env.AUTHOR_NAME }}" == "yash.rathore@tmdc.io" ]; then
+            echo "api_key=${{ secrets.YASH_API_KEY }}" >> $GITHUB_ENV
+            echo "username=${{ secrets.YASH_USERNAME }}" >> $GITHUB_ENV
+
+          elif [ "${{ env.AUTHOR_NAME }}" == "yogesh.khangode@tmdc.io" ]; then
+            echo "api_key=${{ secrets.YOGESH_API_KEY }}" >> $GITHUB_ENV
+            echo "username=${{ secrets.YOGESH_USERNAME }}" >> $GITHUB_ENV
+            
           else
             echo "Commit author does not match any known members."
             exit 1
