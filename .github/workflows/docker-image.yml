@@ -95,7 +95,7 @@ jobs:
       - name: Apply configuration
         env:
           API_KEY: ${{ steps.map-api-key.outputs.api_key }}
-          USERNAME: ${{ steps.map-credentials.outputs.username }}
+          USERNAME: ${{ steps.map-api-key.outputs.username }}
         run: |
           docker run --rm -i \
             -v $GITHUB_WORKSPACE/.dataos:/dataos \
@@ -112,7 +112,7 @@ jobs:
       - name: Apply configuration without linter
         env:
           API_KEY: ${{ steps.map-api-key.outputs.api_key }}
-          USERNAME: ${{ steps.map-credentials.outputs.username }}
+          USERNAME: ${{ steps.map-api-key.outputs.username }}
         run: |
           docker run --rm -i \
             -v $GITHUB_WORKSPACE/.dataos:/dataos \
