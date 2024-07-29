@@ -31,6 +31,24 @@ jobs:
           echo "Found file: $file"
           echo "file=$file" >> $GITHUB_ENV
 
+      - name: Determine Commit Author
+        id: get-author
+        run: |
+          AUTHOR_NAME=$(git log -1 --pretty=format:'%ae')
+          echo "::set-output name=author::$AUTHOR_NAME"
+
+      - name: Map API Key
+        id: map-api-key
+        run: |
+          if [ "${{ steps.get-author.outputs.author }}" == "shreya negi" ]; then
+            echo "::set-output name=api_key::${{ secrets.API_KEY }}"
+          elif [ "${{ steps.get-author.outputs.author }}" == "yash rathore" ]; then
+            echo "::set-output name=api_key::${{ secrets.YASH_API_KEY }}"
+          else
+            echo "Commit author does not match any known members."
+            exit 1
+          fi
+
       - name: Delete resources
         id: delete-resources
         run: |
@@ -67,6 +85,8 @@ jobs:
             rubiklabs/dataos-ctl:2.10.9-dev delete -f /jobsfolder/$file
 
       - name: Apply configuration
+        env:
+          API_KEY: ${{ steps.map-api-key.outputs.api_key }}
         run: |
           docker run --rm -i \
             -v $GITHUB_WORKSPACE/.dataos:/dataos \
@@ -80,7 +100,9 @@ jobs:
             -e APIKEY=$APIKEY \
             rubiklabs/dataos-ctl:2.10.9-dev apply -f /jobsfolder/$file -l
 
-      - name: Apply configuration without logging
+      - name: Apply configuration without linter
+        env:
+          API_KEY: ${{ steps.map-api-key.outputs.api_key }}
         run: |
           docker run --rm -i \
             -v $GITHUB_WORKSPACE/.dataos:/dataos \
