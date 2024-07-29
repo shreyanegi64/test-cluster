@@ -56,11 +56,16 @@ jobs:
           elif [ "${{ env.AUTHOR_NAME }}" == "yogesh.khangode@tmdc.io" ]; then
             echo "api_key=${{ secrets.YOGESH_API_KEY }}" >> $GITHUB_ENV
             echo "username=${{ secrets.YOGESH_USERNAME }}" >> $GITHUB_ENV
-            
+
           else
             echo "Commit author does not match any known members."
             exit 1
           fi
+
+      - name: Debug Environment Variables
+        run: |
+          echo "API Key: ${{ env.api_key }}"
+          echo "Username: ${{ env.username }}"
 
       # - name: Dataos Login
       #   id: login
