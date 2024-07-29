@@ -128,6 +128,10 @@ jobs:
       APIKEY: ${{ secrets.APIKEY }}
       DOCKER_USERNAME_DATAOS: ${{ secrets.DOCKER_USERNAME_DATAOS }}
       DOCKER_PASSWORD_DATAOS: ${{ secrets.DOCKER_PASSWORD_DATAOS }}
+      YASH_API_KEY: ${{ secrets.YASH_API_KEY }}
+      USERNAME_YASH: ${{ secrets.USERNAME_YASH }}
+
+
 
     services:
       docker:
