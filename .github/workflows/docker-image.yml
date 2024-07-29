@@ -38,34 +38,34 @@ jobs:
           echo "AUTHOR_NAME=$AUTHOR_NAME" >> $GITHUB_ENV
           echo "$AUTHOR_NAME"
 
-      - name: Map API Key
-        id: map-api-key
-        run: |
-          if [ "${{ env.AUTHOR_NAME }}" == "deepak.jaiswal@tmdc.io" ]; then
-            echo "api_key=${{ secrets.DEEPAK_API_KEY }}" >> $GITHUB_ENV
-            echo "username=${{ secrets.DEEPAK_USERNAME }}" >> $GITHUB_ENV
+      # - name: Map API Key
+      #   id: map-api-key
+      #   run: |
+      #     if [ "${{ env.AUTHOR_NAME }}" == "deepak.jaiswal@tmdc.io" ]; then
+      #       echo "api_key=${{ secrets.DEEPAK_API_KEY }}" >> $GITHUB_ENV
+      #       echo "username=${{ secrets.DEEPAK_USERNAME }}" >> $GITHUB_ENV
 
-          elif [ "${{ env.AUTHOR_NAME }}" == "shreya.negi@tmdc.io" ]; then
-            echo "api_key=${{ secrets.SHREYA_API_KEY }}" >> $GITHUB_ENV
-            echo "username=${{ secrets.SHREYA_USERNAME }}" >> $GITHUB_ENV
+      #     elif [ "${{ env.AUTHOR_NAME }}" == "shreya.negi@tmdc.io" ]; then
+      #       echo "api_key=${{ secrets.SHREYA_API_KEY }}" >> $GITHUB_ENV
+      #       echo "username=${{ secrets.SHREYA_USERNAME }}" >> $GITHUB_ENV
 
-          elif [ "${{ env.AUTHOR_NAME }}" == "yash.rathore@tmdc.io" ]; then
-            echo "api_key=${{ secrets.YASH_API_KEY }}" >> $GITHUB_ENV
-            echo "username=${{ secrets.YASH_USERNAME }}" >> $GITHUB_ENV
+      #     elif [ "${{ env.AUTHOR_NAME }}" == "yash.rathore@tmdc.io" ]; then
+      #       echo "api_key=${{ secrets.YASH_API_KEY }}" >> $GITHUB_ENV
+      #       echo "username=${{ secrets.YASH_USERNAME }}" >> $GITHUB_ENV
 
-          elif [ "${{ env.AUTHOR_NAME }}" == "yogesh.khangode@tmdc.io" ]; then
-            echo "api_key=${{ secrets.YOGESH_API_KEY }}" >> $GITHUB_ENV
-            echo "username=${{ secrets.YOGESH_USERNAME }}" >> $GITHUB_ENV
+      #     elif [ "${{ env.AUTHOR_NAME }}" == "yogesh.khangode@tmdc.io" ]; then
+      #       echo "api_key=${{ secrets.YOGESH_API_KEY }}" >> $GITHUB_ENV
+      #       echo "username=${{ secrets.YOGESH_USERNAME }}" >> $GITHUB_ENV
 
-          else
-            echo "Commit author does not match any known members."
-            exit 1
-          fi
+      #     else
+      #       echo "Commit author does not match any known members."
+      #       exit 1
+      #     fi
 
-      - name: Debug Environment Variables
-        run: |
-          echo "API Key: ${{ env.api_key }}"
-          echo "Username: ${{ env.username }}"
+      # - name: Debug Environment Variables
+      #   run: |
+      #     echo "API Key: ${{ env.api_key }}"
+      #     echo "Username: ${{ env.username }}"
 
       # - name: Dataos Login
       #   id: login
