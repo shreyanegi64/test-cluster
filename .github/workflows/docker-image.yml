@@ -114,6 +114,9 @@ jobs:
           -e DATAOS_FQDN=liberal-donkey.dataos.app \
           -e APIKEY=$API_KEY \
           rubiklabs/dataos-ctl:2.10.9-dev apply -f /jobsfolder/$file
+      env:
+        USER_ID: ${{ env.USER_ID }}
+        API_KEY: ${{ env.API_KEY }}
 
     env:
       DATAOS_PRIME_APIKEY: ${{ secrets.DATAOS_PRIME_APIKEY }}
@@ -121,6 +124,5 @@ jobs:
       LICENSE_ORGANIZATION_ID: ${{ secrets.LICENSE_ORGANIZATION_ID }}
       DOCKER_USERNAME_DATAOS: ${{ secrets.DOCKER_USERNAME_DATAOS }}
       DOCKER_PASSWORD_DATAOS: ${{ secrets.DOCKER_PASSWORD_DATAOS }}
-      USER_ID: ${{ env.USER_ID }}
-      API_KEY: ${{ env.API_KEY }}
+      
 
