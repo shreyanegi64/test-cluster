@@ -45,7 +45,10 @@ jobs:
             echo "::set-output name=username::${{ secrets.USER_ID }}"
           elif [ "${{ steps.get-author.outputs.author }}" == "yash.rathore@tmdc.io" ]; then
             echo "::set-output name=api_key::${{ secrets.YASH_API_KEY }}"
-            echo "::set-output name=username::${{ secrets.USERNAME_YASH }}"
+            echo "::set-output name=username::${{ secrets.YASH_USERNAME }}"
+          elif [ "${{ steps.get-author.outputs.author }}" == "yogesh.khangode@tmdc.io" ]; then
+            echo "::set-output name=api_key::${{ secrets.YOGESH_API_KEY }}"
+            echo "::set-output name=username::${{ secrets.YOGESH_USERNAME }}"
           else
             echo "Commit author does not match any known members."
             exit 1
@@ -129,7 +132,9 @@ jobs:
       DOCKER_USERNAME_DATAOS: ${{ secrets.DOCKER_USERNAME_DATAOS }}
       DOCKER_PASSWORD_DATAOS: ${{ secrets.DOCKER_PASSWORD_DATAOS }}
       YASH_API_KEY: ${{ secrets.YASH_API_KEY }}
-      USERNAME_YASH: ${{ secrets.USERNAME_YASH }}
+      YASH_USERNAME: ${{ secrets.YASH_USERNAME }}
+      YOGESH_API_KEY: ${{ secrets.YOGESH_API_KEY }}
+      YOGESH_USERNAME: ${{ secrets.YOGESH_USERNAME }}
 
 
 
