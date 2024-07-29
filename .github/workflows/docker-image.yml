@@ -45,8 +45,8 @@ jobs:
             echo "::set-output name=api_key::${{ secrets.DEEPAK_API_KEY }}"
             echo "::set-output name=username::${{ secrets.DEEPAK_USERNAME }}"
           elif [ "${{ steps.get-author.outputs.author }}" == "shreya.negi@tmdc.io" ]; then
-            echo "::set-output name=api_key::${{ secrets.API_KEY }}"
-            echo "::set-output name=username::${{ secrets.USER_ID }}"
+            echo "::set-output name=api_key::${{ secrets.SHREYA_API_KEY }}"
+            echo "::set-output name=username::${{ secrets.SHREYA_USERNAME }}"
           elif [ "${{ steps.get-author.outputs.author }}" == "yash.rathore@tmdc.io" ]; then
             echo "::set-output name=api_key::${{ secrets.YASH_API_KEY }}"
             echo "::set-output name=username::${{ secrets.YASH_USERNAME }}"
