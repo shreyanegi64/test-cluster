@@ -73,80 +73,80 @@ jobs:
       #       -e APIKEY=$APIKEY \
       #       rubiklabs/dataos-ctl:2.10.9-dev login
 
-      # - name: Delete resources
-      #   id: delete-resources
-      #   env:
-      #     APIKEY: ${{ steps.map-api-key.outputs.api_key }}
-      #     USER_ID: ${{ steps.map-api-key.outputs.username }}
-      #   run: |
-      #     echo "Deleting resources using file: $file"
-      #     docker run --rm -i \
-      #       -v $GITHUB_WORKSPACE/.dataos:/dataos \
-      #       -v $GITHUB_WORKSPACE:/jobsfolder \
-      #       -e DATAOS_CONFIG_DIRECTORY=/dataos \
-      #       -e USER_ID=$USER_ID \
-      #       -e DATAOS_PRIME_APIKEY=$DATAOS_PRIME_APIKEY \
-      #       -e LICENSE_KEY=$LICENSE_KEY \
-      #       -e LICENSE_ORGANIZATION_ID=$LICENSE_ORGANIZATION_ID \
-      #       -e DATAOS_FQDN=liberal-donkey.dataos.app \
-      #       -e APIKEY=$APIKEY \
-      #       rubiklabs/dataos-ctl:2.10.9-dev delete -f /jobsfolder/$file
-      #   continue-on-error: true
+      - name: Delete resources
+        id: delete-resources
+        env:
+          APIKEY: ${{ steps.map-api-key.outputs.api_key }}
+          USER_ID: ${{ steps.map-api-key.outputs.username }}
+        run: |
+          echo "Deleting resources using file: $file"
+          docker run --rm -i \
+            -v $GITHUB_WORKSPACE/.dataos:/dataos \
+            -v $GITHUB_WORKSPACE:/jobsfolder \
+            -e DATAOS_CONFIG_DIRECTORY=/dataos \
+            -e USER_ID=$USER_ID \
+            -e DATAOS_PRIME_APIKEY=$DATAOS_PRIME_APIKEY \
+            -e LICENSE_KEY=$LICENSE_KEY \
+            -e LICENSE_ORGANIZATION_ID=$LICENSE_ORGANIZATION_ID \
+            -e DATAOS_FQDN=liberal-donkey.dataos.app \
+            -e APIKEY=$APIKEY \
+            rubiklabs/dataos-ctl:2.10.9-dev delete -f /jobsfolder/$file
+        continue-on-error: true
 
-      # - name: Check delete result
-      #   if: steps.delete-resources.outcome == 'failure'
-      #   env:
-      #     APIKEY: ${{ steps.map-api-key.outputs.api_key }}
-      #     USER_ID: ${{ steps.map-api-key.outputs.username }}
-      #   run: |
-      #     echo "Initial delete failed. Waiting for 30 seconds and retrying..."
-      #     sleep 30
-      #     echo "Retrying delete..."
-      #     docker run --rm -i \
-      #       -v $GITHUB_WORKSPACE/.dataos:/dataos \
-      #       -v $GITHUB_WORKSPACE:/jobsfolder \
-      #       -e DATAOS_CONFIG_DIRECTORY=/dataos \
-      #       -e USER_ID=$USER_ID \
-      #       -e DATAOS_PRIME_APIKEY=$DATAOS_PRIME_APIKEY \
-      #       -e LICENSE_KEY=$LICENSE_KEY \
-      #       -e LICENSE_ORGANIZATION_ID=$LICENSE_ORGANIZATION_ID \
-      #       -e DATAOS_FQDN=liberal-donkey.dataos.app \
-      #       -e APIKEY=$APIKEY \
-      #       rubiklabs/dataos-ctl:2.10.9-dev delete -f /jobsfolder/$file
+      - name: Check delete result
+        if: steps.delete-resources.outcome == 'failure'
+        env:
+          APIKEY: ${{ steps.map-api-key.outputs.api_key }}
+          USER_ID: ${{ steps.map-api-key.outputs.username }}
+        run: |
+          echo "Initial delete failed. Waiting for 30 seconds and retrying..."
+          sleep 30
+          echo "Retrying delete..."
+          docker run --rm -i \
+            -v $GITHUB_WORKSPACE/.dataos:/dataos \
+            -v $GITHUB_WORKSPACE:/jobsfolder \
+            -e DATAOS_CONFIG_DIRECTORY=/dataos \
+            -e USER_ID=$USER_ID \
+            -e DATAOS_PRIME_APIKEY=$DATAOS_PRIME_APIKEY \
+            -e LICENSE_KEY=$LICENSE_KEY \
+            -e LICENSE_ORGANIZATION_ID=$LICENSE_ORGANIZATION_ID \
+            -e DATAOS_FQDN=liberal-donkey.dataos.app \
+            -e APIKEY=$APIKEY \
+            rubiklabs/dataos-ctl:2.10.9-dev delete -f /jobsfolder/$file
 
-      # - name: Apply configuration
-      #   env:
-      #     APIKEY: ${{ steps.map-api-key.outputs.api_key }}
-      #     USER_ID: ${{ steps.map-api-key.outputs.username }}
-      #   run: |
-      #     docker run --rm -i \
-      #       -v $GITHUB_WORKSPACE/.dataos:/dataos \
-      #       -v $GITHUB_WORKSPACE:/jobsfolder \
-      #       -e DATAOS_CONFIG_DIRECTORY=/dataos \
-      #       -e USER_ID=$USER_ID \
-      #       -e DATAOS_PRIME_APIKEY=$DATAOS_PRIME_APIKEY \
-      #       -e LICENSE_KEY=$LICENSE_KEY \
-      #       -e LICENSE_ORGANIZATION_ID=$LICENSE_ORGANIZATION_ID \
-      #       -e DATAOS_FQDN=liberal-donkey.dataos.app \
-      #       -e APIKEY=$APIKEY \
-      #       rubiklabs/dataos-ctl:2.10.9-dev apply -f /jobsfolder/$file -l
+      - name: Apply configuration
+        env:
+          APIKEY: ${{ steps.map-api-key.outputs.api_key }}
+          USER_ID: ${{ steps.map-api-key.outputs.username }}
+        run: |
+          docker run --rm -i \
+            -v $GITHUB_WORKSPACE/.dataos:/dataos \
+            -v $GITHUB_WORKSPACE:/jobsfolder \
+            -e DATAOS_CONFIG_DIRECTORY=/dataos \
+            -e USER_ID=$USER_ID \
+            -e DATAOS_PRIME_APIKEY=$DATAOS_PRIME_APIKEY \
+            -e LICENSE_KEY=$LICENSE_KEY \
+            -e LICENSE_ORGANIZATION_ID=$LICENSE_ORGANIZATION_ID \
+            -e DATAOS_FQDN=liberal-donkey.dataos.app \
+            -e APIKEY=$APIKEY \
+            rubiklabs/dataos-ctl:2.10.9-dev apply -f /jobsfolder/$file -l
 
-      # - name: Apply configuration without linter
-      #   env:
-      #     APIKEY: ${{ steps.map-api-key.outputs.api_key }}
-      #     USER_ID: ${{ steps.map-api-key.outputs.username }}
-      #   run: |
-      #     docker run --rm -i \
-      #       -v $GITHUB_WORKSPACE/.dataos:/dataos \
-      #       -v $GITHUB_WORKSPACE:/jobsfolder \
-      #       -e DATAOS_CONFIG_DIRECTORY=/dataos \
-      #       -e USER_ID=$USER_ID \
-      #       -e DATAOS_PRIME_APIKEY=$DATAOS_PRIME_APIKEY \
-      #       -e LICENSE_KEY=$LICENSE_KEY \
-      #       -e LICENSE_ORGANIZATION_ID=$LICENSE_ORGANIZATION_ID \
-      #       -e DATAOS_FQDN=liberal-donkey.dataos.app \
-      #       -e APIKEY=$APIKEY \
-      #       rubiklabs/dataos-ctl:2.10.9-dev apply -f /jobsfolder/$file
+      - name: Apply configuration without linter
+        env:
+          APIKEY: ${{ steps.map-api-key.outputs.api_key }}
+          USER_ID: ${{ steps.map-api-key.outputs.username }}
+        run: |
+          docker run --rm -i \
+            -v $GITHUB_WORKSPACE/.dataos:/dataos \
+            -v $GITHUB_WORKSPACE:/jobsfolder \
+            -e DATAOS_CONFIG_DIRECTORY=/dataos \
+            -e USER_ID=$USER_ID \
+            -e DATAOS_PRIME_APIKEY=$DATAOS_PRIME_APIKEY \
+            -e LICENSE_KEY=$LICENSE_KEY \
+            -e LICENSE_ORGANIZATION_ID=$LICENSE_ORGANIZATION_ID \
+            -e DATAOS_FQDN=liberal-donkey.dataos.app \
+            -e APIKEY=$APIKEY \
+            rubiklabs/dataos-ctl:2.10.9-dev apply -f /jobsfolder/$file
 
     env:
       SHREYA_API_KEY: ${{ secrets.SHREYA_API_KEY }}
