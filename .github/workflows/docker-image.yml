@@ -41,7 +41,10 @@ jobs:
       - name: Map API Key
         id: map-api-key
         run: |
-          if [ "${{ steps.get-author.outputs.author }}" == "shreya.negi@tmdc.io" ]; then
+          if [ "${{ steps.get-author.outputs.author }}" == "deepak.jaiswal@tmdc.io" ]; then
+            echo "::set-output name=api_key::${{ secrets.DEEPAK_API_KEY }}"
+            echo "::set-output name=username::${{ secrets.DEEPAK_USERNAME }}"
+          elif [ "${{ steps.get-author.outputs.author }}" == "shreya.negi@tmdc.io" ]; then
             echo "::set-output name=api_key::${{ secrets.API_KEY }}"
             echo "::set-output name=username::${{ secrets.USER_ID }}"
           elif [ "${{ steps.get-author.outputs.author }}" == "yash.rathore@tmdc.io" ]; then
@@ -50,9 +53,6 @@ jobs:
           elif [ "${{ steps.get-author.outputs.author }}" == "yogesh.khangode@tmdc.io" ]; then
             echo "::set-output name=api_key::${{ secrets.YOGESH_API_KEY }}"
             echo "::set-output name=username::${{ secrets.YOGESH_USERNAME }}"
-          elif [ "${{ steps.get-author.outputs.author }}" == "deepak.jaiswal@tmdc.io" ]; then
-            echo "::set-output name=api_key::${{ secrets.DEEPAK_API_KEY }}"
-            echo "::set-output name=username::${{ secrets.DEEPAK_USERNAME }}"
           else
             echo "Commit author does not match any known members."
             exit 1
