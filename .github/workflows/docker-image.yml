@@ -40,9 +40,9 @@ jobs:
       - name: Map API Key
         id: map-api-key
         run: |
-          if [ "${{ steps.get-author.outputs.author }}" == "shreya negi" ]; then
+          if [ "${{ steps.get-author.outputs.author }}" == "shreya.negi@tmdc.io" ]; then
             echo "::set-output name=api_key::${{ secrets.API_KEY }}"
-          elif [ "${{ steps.get-author.outputs.author }}" == "yash rathore" ]; then
+          elif [ "${{ steps.get-author.outputs.author }}" == "yash.rathore@tmdc.io" ]; then
             echo "::set-output name=api_key::${{ secrets.YASH_API_KEY }}"
           else
             echo "Commit author does not match any known members."
