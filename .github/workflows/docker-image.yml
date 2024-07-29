@@ -73,6 +73,7 @@ jobs:
       if: steps.delete-resources.outcome == 'failure'
       run: |
         echo "Initial delete failed. Waiting for 30 seconds and retrying..."
+        echo $API_KEY
         sleep 30
         echo "Retrying delete..."
         docker run --rm -i \
@@ -120,6 +121,8 @@ jobs:
       env:
         USER_ID: ${{ env.USER_ID }}
         API_KEY: ${{ env.API_KEY }}
+
+      
 
     env:
       DATAOS_PRIME_APIKEY: ${{ secrets.DATAOS_PRIME_APIKEY }}
