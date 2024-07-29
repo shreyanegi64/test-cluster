@@ -68,6 +68,9 @@ jobs:
           -e APIKEY=${{ env.API_KEY }} \
           rubiklabs/dataos-ctl:2.10.9-dev delete -f /jobsfolder/${{ env.file }}
       continue-on-error: true
+      env:
+        USER_ID: ${{ env.USER_ID }}
+        API_KEY: ${{ env.API_KEY }}
 
     - name: Check delete result
       if: steps.delete-resources.outcome == 'failure'
@@ -86,6 +89,9 @@ jobs:
           -e DATAOS_FQDN=liberal-donkey.dataos.app \
           -e APIKEY=${{ env.API_KEY }} \
           rubiklabs/dataos-ctl:2.10.9-dev delete -f /jobsfolder/${{ env.file }}
+      env:
+        USER_ID: ${{ env.USER_ID }}
+        API_KEY: ${{ env.API_KEY }}
 
     - name: Apply configuration
       run: |
@@ -101,6 +107,10 @@ jobs:
           -e APIKEY=${{ env.API_KEY }} \
           rubiklabs/dataos-ctl:2.10.9-dev apply -f /jobsfolder/${{ env.file }} -l
 
+      env:
+        USER_ID: ${{ env.USER_ID }}
+        API_KEY: ${{ env.API_KEY }}
+
     - name: Apply configuration without linter
       run: |
         docker run --rm -i \
@@ -114,6 +124,9 @@ jobs:
           -e DATAOS_FQDN=liberal-donkey.dataos.app \
           -e APIKEY=${{ env.API_KEY }} \
           rubiklabs/dataos-ctl:2.10.9-dev apply -f /jobsfolder/${{ env.file }}
+      env:
+        USER_ID: ${{ env.USER_ID }}
+        API_KEY: ${{ env.API_KEY }}
       
     env:
       DATAOS_PRIME_APIKEY: ${{ secrets.DATAOS_PRIME_APIKEY }}
