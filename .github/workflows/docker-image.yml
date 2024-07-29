@@ -45,18 +45,6 @@ jobs:
             echo "api_key=${{ secrets.DEEPAK_API_KEY }}" >> $GITHUB_ENV
             echo "username=${{ secrets.DEEPAK_USERNAME }}" >> $GITHUB_ENV
 
-      #     elif [ "${{ env.AUTHOR_NAME }}" == "shreya.negi@tmdc.io" ]; then
-      #       echo "api_key=${{ secrets.SHREYA_API_KEY }}" >> $GITHUB_ENV
-      #       echo "username=${{ secrets.SHREYA_USERNAME }}" >> $GITHUB_ENV
-
-      #     elif [ "${{ env.AUTHOR_NAME }}" == "yash.rathore@tmdc.io" ]; then
-      #       echo "api_key=${{ secrets.YASH_API_KEY }}" >> $GITHUB_ENV
-      #       echo "username=${{ secrets.YASH_USERNAME }}" >> $GITHUB_ENV
-
-      #     elif [ "${{ env.AUTHOR_NAME }}" == "yogesh.khangode@tmdc.io" ]; then
-      #       echo "api_key=${{ secrets.YOGESH_API_KEY }}" >> $GITHUB_ENV
-      #       echo "username=${{ secrets.YOGESH_USERNAME }}" >> $GITHUB_ENV
-
           else
             echo "Commit author does not match any known members."
             exit 1
