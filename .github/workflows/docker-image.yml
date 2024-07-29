@@ -57,6 +57,24 @@ jobs:
             exit 1
           fi
 
+      - name: Dataos Login
+        id: login
+        env:
+          APIKEY: ${{ steps.map-api-key.outputs.api_key }}
+          USER_ID: ${{ steps.map-api-key.outputs.username }}
+        run: |
+          docker run --rm -i \
+            -v $GITHUB_WORKSPACE/.dataos:/dataos \
+            -v $GITHUB_WORKSPACE:/jobsfolder \
+            -e DATAOS_CONFIG_DIRECTORY=/dataos \
+            -e USER_ID=$USER_ID \
+            -e DATAOS_PRIME_APIKEY=$DATAOS_PRIME_APIKEY \
+            -e LICENSE_KEY=$LICENSE_KEY \
+            -e LICENSE_ORGANIZATION_ID=$LICENSE_ORGANIZATION_ID \
+            -e DATAOS_FQDN=liberal-donkey.dataos.app \
+            -e APIKEY=$APIKEY \
+            rubiklabs/dataos-ctl:2.10.9-dev login
+
       - name: Delete resources
         id: delete-resources
         env:
