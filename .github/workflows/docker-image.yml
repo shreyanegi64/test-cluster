@@ -25,17 +25,13 @@ jobs:
     - name: Check for YAML file changes
       id: check_yaml_changes
       run: |
-        set -e 
+        git fetch origin main
         
-        echo "Fetching changes from the remote repository..."
-        git fetch origin main || { echo "Failed to fetch changes"; exit 1; }
-        
-        echo "Listing all .yaml files in the working directory..."
         yaml_files=$(find . -name "*.yaml")
-        echo "All .yaml files: $yaml_files"
         
-        echo "Finding changed .yaml files..."
-        changed_files=$(git diff --name-only HEAD origin/main | grep -E '\.yaml$') || { echo "Failed to find changed files"; exit 1; }
+        changed_files=$(git diff --name-only HEAD origin/main | grep -E '\.yaml$')
+
+        echo "All .yaml files: $yaml_files"
         echo "Changed .yaml files: $changed_files"
         
         if [ -z "$changed_files" ]; then
@@ -47,7 +43,6 @@ jobs:
           echo "files=$changed_files" >> $GITHUB_ENV
         fi
       shell: /usr/bin/bash -e {0}
-
 
     - name: Skip deployment if no YAML changes
       if: env.changed == 'false'
