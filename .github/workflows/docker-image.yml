@@ -26,29 +26,34 @@ jobs:
       id: check_yaml_changes
       run: |
         set -e
-        
+
+        # Fetch the latest changes from the remote repository
         echo "Fetching changes from the remote repository..."
         git fetch origin main || { echo "Failed to fetch changes from origin/main"; exit 1; }
         
+        # Display current branch and commit
         echo "Current branch and commit:"
         git branch -v
-        
-        echo "Fetching latest commit details from origin/main:"
-        git log -1 origin/main
-        
-        echo "Current commit details:"
-        git log -1 HEAD
 
+        echo "Fetching latest commit details from origin/main:"
+        git log -1 origin/main || { echo "Failed to get log from origin/main"; exit 1; }
+
+        echo "Current commit details:"
+        git log -1 HEAD || { echo "Failed to get current commit log"; exit 1; }
+
+        # List all .yaml files in the working directory for debugging
         echo "Listing all .yaml files in the working directory..."
         yaml_files=$(find . -name "*.yaml")
         echo "All .yaml files: $yaml_files"
-        
+
+        # Use git diff to compare current and fetched branch
         echo "Finding changed .yaml files..."
-        git diff --name-only HEAD origin/main || { echo "Failed to run git diff"; exit 1; }
-        changed_files=$(git diff --name-only HEAD origin/main | grep -E '\.yaml$')
+        git diff --name-only HEAD..origin/main || { echo "Failed to run git diff"; exit 1; }
+        changed_files=$(git diff --name-only HEAD..origin/main | grep -E '\.yaml$')
         
         echo "Changed .yaml files: $changed_files"
-        
+
+        # Determine if there are any changed .yaml files
         if [ -z "$changed_files" ]; then
           echo "No YAML file changes detected."
           echo "changed=false" >> $GITHUB_ENV
