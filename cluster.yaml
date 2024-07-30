@@ -1,5 +1,5 @@
 version: v1
-name: ajax01
+name: ajax0123
 type: cluster
 cluster:
   compute: query-default
