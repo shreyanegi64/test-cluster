@@ -53,6 +53,9 @@ jobs:
         elif [ "${{ env.author }}" == "chenna_kesava" ]; then
           echo "USER_ID=${{ secrets.CHENNA_USERNAME }}" >> $GITHUB_ENV
           echo "API_KEY=${{ secrets.CHENNA_API_KEY }}" >> $GITHUB_ENV
+        elif [ "${{ env.author }}" == "moneeshtmdc" ]; then
+          echo "USER_ID=${{ secrets.MONEESH_USERNAME }}" >> $GITHUB_ENV
+          echo "API_KEY=${{ secrets.MONEESH_API_KEY }}" >> $GITHUB_ENV
         else
           echo "Unknown author. Exiting."
           exit 1
