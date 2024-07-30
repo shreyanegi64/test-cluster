@@ -36,8 +36,8 @@ jobs:
       id: check_yaml_changes_last_commit
       run: |
         echo "Checking if repository has more than one commit..."
-        commit_count=$(git rev-list --count HEAD)
-        echo $commit_count
+        updated_files=$(git diff --name-only HEAD^ HEAD)
+        echo $updated_files
         
         
 
