@@ -40,26 +40,8 @@ jobs:
         # Ensure repository has more than one commit
         echo "Checking if repository has more than one commit..."
         commit_count=$(git rev-list --count HEAD)
+        echo $commit_count
         
-        if [ "$commit_count" -le 1 ]; then
-          echo "Only one commit found. Skipping check for changes."
-          echo "changed=false" >> $GITHUB_ENV
-          exit 0
-        fi
-
-        echo "Listing changed YAML files in the last commit..."
         
-        # List changed YAML files between the last two commits
-        git diff --name-only HEAD~1 HEAD | grep -E '\.(yaml|yml)$' > changed_yaml_files.txt
-        
-        if [ -s changed_yaml_files.txt ]; then
-          echo "Changed YAML files:"
-          cat changed_yaml_files.txt
-          echo "changed=true" >> $GITHUB_ENV
-          echo "files=$(cat changed_yaml_files.txt)" >> $GITHUB_ENV
-        else
-          echo "No YAML files changed in the last commit."
-          echo "changed=false" >> $GITHUB_ENV
-        fi
       shell: /usr/bin/bash -e {0}
 
