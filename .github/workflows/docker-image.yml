@@ -37,16 +37,8 @@ jobs:
       run: |
         echo "Fetching commit details..."
         current_commit=$(git rev-parse HEAD)
-
-        echo "Listing changed YAML files in the current commit..."
-        changed_files=$(git diff-tree --no-commit-id --name-only -r $current_commit | grep -E '\.(yaml|yml)$')
+        echo $current_commit
         
-        if [ -n "$changed_files" ]; then
-          echo "Changed YAML files:"
-          echo "$changed_files"
-        else
-          echo "No YAML files changed in the current commit."
-        fi
         
         
 
