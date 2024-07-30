@@ -25,13 +25,28 @@ jobs:
     - name: Check for YAML file changes
       id: check_yaml_changes
       run: |
-        git fetch origin main
+        set -e
         
-        yaml_files=$(find . -name "*.yaml")
+        echo "Fetching changes from the remote repository..."
+        git fetch origin main || { echo "Failed to fetch changes from origin/main"; exit 1; }
         
-        changed_files=$(git diff --name-only HEAD origin/main | grep -E '\.yaml$')
+        echo "Current branch and commit:"
+        git branch -v
+        
+        echo "Fetching latest commit details from origin/main:"
+        git log -1 origin/main
+        
+        echo "Current commit details:"
+        git log -1 HEAD
 
+        echo "Listing all .yaml files in the working directory..."
+        yaml_files=$(find . -name "*.yaml")
         echo "All .yaml files: $yaml_files"
+        
+        echo "Finding changed .yaml files..."
+        git diff --name-only HEAD origin/main || { echo "Failed to run git diff"; exit 1; }
+        changed_files=$(git diff --name-only HEAD origin/main | grep -E '\.yaml$')
+        
         echo "Changed .yaml files: $changed_files"
         
         if [ -z "$changed_files" ]; then
