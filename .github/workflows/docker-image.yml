@@ -25,7 +25,7 @@ jobs:
     - name: Check for YAML file changes
       id: check_yaml_changes
       run: |
-        set -e # Exit immediately if a command exits with a non-zero status
+        set -e 
         
         echo "Fetching changes from the remote repository..."
         git fetch origin main || { echo "Failed to fetch changes"; exit 1; }
