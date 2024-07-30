@@ -12,6 +12,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 2  # Fetch the last 2 commits to ensure HEAD~1 is available
 
     - name: List YAML files
       id: list_yaml_files
