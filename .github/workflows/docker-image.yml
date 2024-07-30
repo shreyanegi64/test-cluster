@@ -37,13 +37,12 @@ jobs:
       run: |
         echo "Fetching commit details..."
         current_commit=$(git rev-parse HEAD)
-        parent_commit=$(git rev-parse HEAD^)
 
         echo "Current commit: $current_commit"
         echo "Parent commit: $parent_commit"
 
         echo "Listing changed YAML files in the current commit..."
-        changed_files=$(git diff --name-only $parent_commit $current_commit | grep -E '\.(yaml|yml)$')
+        changed_files=$(git diff --name-only $current_commit | grep -E '\.(yaml|yml)$')
 
         if [ -n "$changed_files" ]; then
           echo "Changed YAML files:"
