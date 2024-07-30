@@ -35,13 +35,9 @@ jobs:
     - name: Check for YAML file changes in the last commit
       id: check_yaml_changes_last_commit
       run: |
-        set -e
-        
-        # Ensure repository has more than one commit
         echo "Checking if repository has more than one commit..."
         commit_count=$(git rev-list --count HEAD)
         echo $commit_count
         
         
-      shell: /usr/bin/bash -e {0}
 
