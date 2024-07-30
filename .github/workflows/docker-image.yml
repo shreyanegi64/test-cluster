@@ -1,9 +1,9 @@
-name: Check YAML Files and Changes
+name: CI/CD Pipeline
 
 on:
   push:
     branches:
-      - main # or your default branch
+      - main
 
 jobs:
   check_files:
@@ -13,30 +13,162 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
       with:
-        fetch-depth: 2  # Fetch the last 2 commits to ensure HEAD~1 is available
+        fetch-depth: 2  # Ensure we have enough commit history
 
-    - name: List YAML files
-      id: list_yaml_files
+    - name: Get commit author
+      id: get_author
       run: |
-        echo "Listing all YAML files..."
-        find . -name "*.yaml" -o -name "*.yml" > all_yaml_files.txt
-        cat all_yaml_files.txt
+        commit_author=$(git log -1 --format='%an')
+        echo "Commit author is $commit_author"
+        echo "author=$commit_author" >> $GITHUB_ENV
 
-    - name: Check for YAML file changes in the last commit
-      id: check_yaml_changes_last_commit
+    - name: Set API Key and User ID
+      id: set_env
       run: |
-        echo "Fetching commit details..."
+        if [ "${{ env.author }}" == "shreya negi" ]; then
+          echo "USER_ID=${{ secrets.SHREYA_USERNAME }}" >> $GITHUB_ENV
+          echo "API_KEY=${{ secrets.SHREYA_API_KEY }}" >> $GITHUB_ENV
+        elif [ "${{ env.author }}" == "itsyourdj" ]; then
+          echo "USER_ID=${{ secrets.DEEPAK_USERNAME }}" >> $GITHUB_ENV
+          echo "API_KEY=${{ secrets.DEEPAK_API_KEY }}" >> $GITHUB_ENV
+        elif [ "${{ env.author }}" == "kanak_gupta" ]; then
+          echo "USER_ID=${{ secrets.KHUSHI_USERNAME }}" >> $GITHUB_ENV
+          echo "API_KEY=${{ secrets.DEEPAK_API_KEY }}" >> $GITHUB_ENV
+        elif [ "${{ env.author }}" == "chenna_kesava" ]; then
+          echo "USER_ID=${{ secrets.CHENNA_USERNAME }}" >> $GITHUB_ENV
+          echo "API_KEY=${{ secrets.CHENNA_API_KEY }}" >> $GITHUB_ENV
+        elif [ "${{ env.author }}" == "moneeshtmdc" ]; then
+          echo "USER_ID=${{ secrets.MONEESH_USERNAME }}" >> $GITHUB_ENV
+          echo "API_KEY=${{ secrets.MONEESH_API_KEY }}" >> $GITHUB_ENV
+        else
+          echo "Unknown author. Exiting."
+          exit 1
+        fi
+
+    - name: List changed files
+      id: list_changed_files
+      run: |
         previous_commit=$(git rev-parse HEAD~1)
         current_commit=$(git rev-parse HEAD)
         echo "Previous commit: $previous_commit"
         echo "Current commit: $current_commit"
 
-        echo "Listing changed YAML files between the previous and current commit..."
+        echo "Listing changed files between the previous and current commit..."
         changed_files=$(git diff --name-only $previous_commit $current_commit | grep -E '\.(yaml|yml)$')
-
+        
         if [ -n "$changed_files" ]; then
-          echo "Changed YAML files:"
+          echo "Changed files:"
           echo "$changed_files"
+          echo "$changed_files" > changed_files.txt
         else
-          echo "No YAML files changed in the last commit."
+          echo "No files changed in the last commit."
+          echo "No files changed" > changed_files.txt
         fi
+
+    - name: Delete resources
+      id: delete-resources
+      run: |
+        if grep -q . changed_files.txt; then
+          for file in $(cat changed_files.txt); do
+            echo "Deleting resource using file: $file"
+            docker run --rm -i \
+              -v $GITHUB_WORKSPACE/.dataos:/dataos \
+              -v $GITHUB_WORKSPACE:/jobsfolder \
+              -e DATAOS_CONFIG_DIRECTORY=/dataos \
+              -e USER_ID=${{ env.USER_ID }} \
+              -e DATAOS_PRIME_APIKEY=${{ secrets.DATAOS_PRIME_APIKEY }} \
+              -e LICENSE_KEY=${{ secrets.LICENSE_KEY }} \
+              -e LICENSE_ORGANIZATION_ID=${{ secrets.LICENSE_ORGANIZATION_ID }} \
+              -e DATAOS_FQDN=liberal-donkey.dataos.app \
+              -e APIKEY=${{ env.API_KEY }} \
+              rubiklabs/dataos-ctl:2.10.9-dev delete -f /jobsfolder/$file
+          done
+        else
+          echo "No resources to delete."
+        fi
+      continue-on-error: true
+      env:
+        USER_ID: ${{ env.USER_ID }}
+        API_KEY: ${{ env.API_KEY }}
+
+    - name: Check delete result
+      if: steps.delete-resources.outcome == 'failure'
+      run: |
+        echo "Initial delete failed. Waiting for 30 seconds and retrying..."
+        sleep 30
+        echo "Retrying delete..."
+        if grep -q . changed_files.txt; then
+          for file in $(cat changed_files.txt); do
+            docker run --rm -i \
+              -v $GITHUB_WORKSPACE/.dataos:/dataos \
+              -v $GITHUB_WORKSPACE:/jobsfolder \
+              -e DATAOS_CONFIG_DIRECTORY=/dataos \
+              -e USER_ID=${{ env.USER_ID }} \
+              -e DATAOS_PRIME_APIKEY=${{ secrets.DATAOS_PRIME_APIKEY }} \
+              -e LICENSE_KEY=${{ secrets.LICENSE_KEY }} \
+              -e LICENSE_ORGANIZATION_ID=${{ secrets.LICENSE_ORGANIZATION_ID }} \
+              -e DATAOS_FQDN=liberal-donkey.dataos.app \
+              -e APIKEY=${{ env.API_KEY }} \
+              rubiklabs/dataos-ctl:2.10.9-dev delete -f /jobsfolder/$file
+          done
+        else
+          echo "No resources to delete."
+        fi
+      env:
+        USER_ID: ${{ env.USER_ID }}
+        API_KEY: ${{ env.API_KEY }}
+
+    - name: Apply configuration
+      run: |
+        if grep -q . changed_files.txt; then
+          for file in $(cat changed_files.txt); do
+            echo "Applying configuration using file: $file"
+            docker run --rm -i \
+              -v $GITHUB_WORKSPACE/.dataos:/dataos \
+              -v $GITHUB_WORKSPACE:/jobsfolder \
+              -e DATAOS_CONFIG_DIRECTORY=/dataos \
+              -e USER_ID=${{ env.USER_ID }} \
+              -e DATAOS_PRIME_APIKEY=${{ secrets.DATAOS_PRIME_APIKEY }} \
+              -e LICENSE_KEY=${{ secrets.LICENSE_KEY }} \
+              -e LICENSE_ORGANIZATION_ID=${{ secrets.LICENSE_ORGANIZATION_ID }} \
+              -e DATAOS_FQDN=liberal-donkey.dataos.app \
+              -e APIKEY=${{ env.API_KEY }} \
+              rubiklabs/dataos-ctl:2.10.9-dev apply -f /jobsfolder/$file -l
+          done
+        else
+          echo "No files to apply."
+        fi
+      env:
+        USER_ID: ${{ env.USER_ID }}
+        API_KEY: ${{ env.API_KEY }}
+
+    - name: Apply configuration without linter
+      run: |
+        if grep -q . changed_files.txt; then
+          for file in $(cat changed_files.txt); do
+            echo "Applying configuration (without linter) using file: $file"
+            docker run --rm -i \
+              -v $GITHUB_WORKSPACE/.dataos:/dataos \
+              -v $GITHUB_WORKSPACE:/jobsfolder \
+              -e DATAOS_CONFIG_DIRECTORY=/dataos \
+              -e USER_ID=${{ env.USER_ID }} \
+              -e DATAOS_PRIME_APIKEY=${{ secrets.DATAOS_PRIME_APIKEY }} \
+              -e LICENSE_KEY=${{ secrets.LICENSE_KEY }} \
+              -e LICENSE_ORGANIZATION_ID=${{ secrets.LICENSE_ORGANIZATION_ID }} \
+              -e DATAOS_FQDN=liberal-donkey.dataos.app \
+              -e APIKEY=${{ env.API_KEY }} \
+              rubiklabs/dataos-ctl:2.10.9-dev apply -f /jobsfolder/$file
+          done
+        else
+          echo "No files to apply."
+        fi
+      env:
+        USER_ID: ${{ env.USER_ID }}
+        API_KEY: ${{ env.API_KEY }}
+
+    env:
+      DATAOS_PRIME_APIKEY: ${{ secrets.DATAOS_PRIME_APIKEY }}
+      LICENSE_KEY: ${{ secrets.LICENSE_KEY }}
+      LICENSE_ORGANIZATION_ID: ${{ secrets.LICENSE_ORGANIZATION_ID }}
+      DOCKER_USERNAME_DATAOS: ${{ secrets.DOCKER_USERNAME_DATAOS }}
+      DOCKER_PASSWORD_DATAOS: ${{ secrets.DOCKER_PASSWORD_DATAOS }}
