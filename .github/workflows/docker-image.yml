@@ -35,9 +35,22 @@ jobs:
     - name: Check for YAML file changes in the last commit
       id: check_yaml_changes_last_commit
       run: |
-        echo "Checking if repository has more than one commit..."
-        updated_files=$(git diff --name-only HEAD^ HEAD)
-        echo git diff --name-only HEAD^ HEAD
+        echo "Fetching commit details..."
+        current_commit=$(git rev-parse HEAD)
+        parent_commit=$(git rev-parse HEAD^)
+
+        echo "Current commit: $current_commit"
+        echo "Parent commit: $parent_commit"
+
+        echo "Listing changed YAML files in the current commit..."
+        changed_files=$(git diff --name-only $parent_commit $current_commit | grep -E '\.(yaml|yml)$')
+
+        if [ -n "$changed_files" ]; then
+          echo "Changed YAML files:"
+          echo "$changed_files"
+        else
+          echo "No YAML files changed in the current commit."
+        fi
         
         
 
