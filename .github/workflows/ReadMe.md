@@ -1,6 +1,6 @@
 # CI/CD Pipeline
 
-This repository contains a GitHub Actions workflow for a CI/CD pipeline designed to automate various tasks, including building and deploying Docker containers, managing Kubernetes resources, and setting environment-specific API keys based on the commit author.
+This repository contains a GitHub Actions workflow for a CI/CD pipeline designed to automate various tasks, including building and deploying Docker containers, managing DataOS resources, and setting environment-specific API keys based on the commit author.
 
 ## Workflow Overview
 
@@ -36,7 +36,7 @@ The workflow is triggered on any push to the `main` branch. It includes the foll
    - Lists the files changed in the most recent commit and saves them to a file named `changed_files.txt`.
 
 9. **Delete resources**:
-   - Deletes Kubernetes resources defined in the changed YAML files using the `rubiklabs/dataos-ctl` Docker image.
+   - Deletes DataOS resources defined in the changed YAML files using the `rubiklabs/dataos-ctl` Docker image.
 
 10. **Check delete result**:
     - Retries deleting the resources if the initial delete attempt fails, with a 30-second wait period.
