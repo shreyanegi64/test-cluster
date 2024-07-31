@@ -78,14 +78,14 @@ jobs:
         fi
 
     - name: Gather files changed
-        uses: trilom/file-changes-action@a6ca26c14274c33b15e6499323aac178af06ad4b
-        id: get_diff_files
-        with:
-          output: ' '
+      uses: trilom/file-changes-action@a6ca26c14274c33b15e6499323aac178af06ad4b
+      id: get_diff_files
+      with:
+        output: ' '
 
     - name: Insight into changed files
-        run: |
-          echo "${{ steps.get_diff_files.outputs.files }}" > get_diff_files.txt
+      run: |
+        echo "${{ steps.get_diff_files.outputs.files }}" > get_diff_files.txt
 
        
 
