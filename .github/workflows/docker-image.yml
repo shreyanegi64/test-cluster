@@ -57,25 +57,7 @@ jobs:
           exit 1
         fi
 
-    - name: List changed files
-      id: list_changed_files
-      run: |
-        previous_commit=$(git rev-parse HEAD~1)
-        current_commit=$(git rev-parse HEAD)
-        echo "Previous commit: $previous_commit"
-        echo "Current commit: $current_commit"
-
-        echo "Listing changed files between the previous and current commit..."
-        changed_files=$(git diff --name-only $previous_commit $current_commit | grep -E '\.(yaml|yml)$')
-        
-        if [ -n "$changed_files" ]; then
-          echo "Changed files:"
-          echo "$changed_files"
-          echo "$changed_files" > changed_files.txt
-        else
-          echo "No files changed in the last commit."
-          echo "No files changed" > changed_files.txt
-        fi
+    
 
     - name: Gather files changed
       uses: trilom/file-changes-action@a6ca26c14274c33b15e6499323aac178af06ad4b
@@ -84,8 +66,17 @@ jobs:
         output: ' '
 
     - name: Insight into changed files
+      id : list_changed_files
       run: |
-        echo ${{ steps.get_diff_files.outputs.files }}
+        changed_files= ${{ steps.get_diff_files.outputs.files }}
+        if [ -n "$changed_files" ]; then
+          echo "Changed files:"
+          echo "$changed_files"
+          echo "$changed_files" > changed_files.txt
+        else
+          echo "No files changed in the last commit."
+          echo "No files changed" > changed_files.txt
+        fi
 
        
 
