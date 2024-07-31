@@ -21,4 +21,4 @@ cluster:
       trinoLogLevel: ERROR
     
     depots:
-      - address: dataos://icebase?acl=rw
+      - address: dataos://icebase?acl=rw #
