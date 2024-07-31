@@ -1,5 +1,5 @@
 version: v1
-name: davina
+name: testcluster
 type: cluster
 cluster:
   compute: query-default
@@ -21,4 +21,4 @@ cluster:
       trinoLogLevel: ERROR
     
     depots:
-      - address: dataos://icebase?acl=rw #
+      - address: dataos://icebase?acl=rw 
