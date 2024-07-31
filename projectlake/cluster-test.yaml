@@ -1,5 +1,5 @@
 version: v1
-name: testcluster
+name: clustertest
 type: cluster
 cluster:
   compute: query-default
