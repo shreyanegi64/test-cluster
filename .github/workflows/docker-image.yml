@@ -66,16 +66,16 @@ jobs:
         output: ' '
 
     - name: Insight into changed files
-      id : list_changed_files
+      id: list_changed_files
       run: |
-        changed_files=${{ steps.get_diff_files.outputs.files }}
+        changed_files=$(awk '$1=="D" {print $2}' file_changes.txt)
         if [ -n "$changed_files" ]; then
           echo "Changed files:"
           echo "$changed_files"
-          echo "$changed_files" > changed_files.txt
+          echo "$changed_files" > deleted_files.txt
         else
-          echo "No files changed in the last commit."
-          echo "No files changed" > changed_files.txt
+          echo "No files deleted in the last commit."
+          echo "No files deleted" > deleted_files.txt
         fi
 
        
