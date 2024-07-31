@@ -80,7 +80,7 @@ jobs:
     - name: Identify deleted files
       id: find_deleted_files
       run: |
-        git diff --name-status HEAD~1 HEAD | grep delete > deleted_files.txt
+        git log --diff-filter=D --summary | grep delete > deleted_files.txt
         if [ -s deleted_files.txt ]; then
           echo "Deleted files detected:"
           cat deleted_files.txt
