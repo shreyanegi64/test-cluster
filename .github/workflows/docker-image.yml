@@ -81,7 +81,8 @@ jobs:
       id: find_deleted_files
       run: |
         deleted_files=$(git log --diff-filter=D --summary | grep delete)
-        echo $deleted_files
+        echo "Deleted Files"
+        echo "$deleted_files"
 
        
 
