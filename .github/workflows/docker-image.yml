@@ -78,16 +78,16 @@ jobs:
         fi
 
     - name: Identify deleted files
-        id: find_deleted_files
-        run: |
-          git diff --name-status HEAD^ HEAD | grep ^D > deleted_files.txt
-          if [ -s deleted_files.txt ]; then
-            echo "Deleted files detected:"
-            cat deleted_files.txt
-            echo "##[set-output name=deleted_files;]$(cat deleted_files.txt | awk '{print $2}' | tr '\n' ' ')"
-          else
-            echo "No deleted files detected"
-            echo "##[set-output name=deleted_files;]none"
+      id: find_deleted_files
+      run: |
+        git diff --name-status HEAD^ HEAD | grep ^D > deleted_files.txt
+        if [ -s deleted_files.txt ]; then
+          echo "Deleted files detected:"
+          cat deleted_files.txt
+          echo "##[set-output name=deleted_files;]$(cat deleted_files.txt | awk '{print $2}' | tr '\n' ' ')"
+        else
+          echo "No deleted files detected"
+          echo "##[set-output name=deleted_files;]none"
 
     - name: Delete resources
       id: delete-resources
