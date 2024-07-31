@@ -77,6 +77,35 @@ jobs:
           echo "No files changed" > changed_files.txt
         fi
 
+    - name: Delete resources for removed files
+      id: delete_removed_resources
+      run: |
+        echo "Deleting resources for removed files..."
+        grep '^D' file_changes.txt | cut -f2 > deleted_files.txt
+        
+        if [ -s deleted_files.txt ]; then
+          for file in $(cat deleted_files.txt); do
+            echo "Deleting resource using file: $file"
+            docker run --rm -i \
+              -v $GITHUB_WORKSPACE/.dataos:/dataos \
+              -v $GITHUB_WORKSPACE:/jobsfolder \
+              -e DATAOS_CONFIG_DIRECTORY=/dataos \
+              -e USER_ID=${{ env.USER_ID }} \
+              -e DATAOS_PRIME_APIKEY=${{ secrets.DATAOS_PRIME_APIKEY }} \
+              -e LICENSE_KEY=${{ secrets.LICENSE_KEY }} \
+              -e LICENSE_ORGANIZATION_ID=${{ secrets.LICENSE_ORGANIZATION_ID }} \
+              -e DATAOS_FQDN=liberal-donkey.dataos.app \
+              -e APIKEY=${{ env.API_KEY }} \
+              rubiklabs/dataos-ctl:2.10.9-dev delete -f /jobsfolder/$file
+          done
+        else
+          echo "No resources to delete."
+        fi
+      continue-on-error: true
+      env:
+        USER_ID: ${{ env.USER_ID }}
+        API_KEY: ${{ env.API_KEY }}
+
     - name: Delete resources
       id: delete-resources
       run: |
