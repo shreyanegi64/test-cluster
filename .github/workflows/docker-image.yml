@@ -68,7 +68,7 @@ jobs:
     - name: Insight into changed files
       id : list_changed_files
       run: |
-        changed_files= ${{ steps.get_diff_files.outputs.files }}
+        changed_files=${{ steps.get_diff_files.outputs.files }}
         if [ -n "$changed_files" ]; then
           echo "Changed files:"
           echo "$changed_files"
