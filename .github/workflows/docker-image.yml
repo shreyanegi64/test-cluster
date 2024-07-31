@@ -57,8 +57,8 @@ jobs:
           exit 1
         fi
 
-    - name: List changed files
-      id: list_changed_files
+    - name: List changed and deleted files
+      id: list_changed_deleted_files
       run: |
         previous_commit=$(git rev-parse HEAD~1)
         current_commit=$(git rev-parse HEAD)
@@ -66,16 +66,10 @@ jobs:
         echo "Current commit: $current_commit"
 
         echo "Listing changed files between the previous and current commit..."
-        changed_files=$(git diff --name-only $previous_commit $current_commit | grep -E '\.(yaml|yml)$')
-        
-        if [ -n "$changed_files" ]; then
-          echo "Changed files:"
-          echo "$changed_files"
-          echo "$changed_files" > changed_files.txt
-        else
-          echo "No files changed in the last commit."
-          echo "No files changed" > changed_files.txt
-        fi
+        git diff --name-status $previous_commit $current_commit > file_changes.txt
+
+        echo "Changed files:"
+        cat file_changes.txt
 
     - name: Delete resources for removed files
       id: delete_removed_resources
@@ -84,7 +78,7 @@ jobs:
         grep '^D' file_changes.txt | cut -f2 > deleted_files.txt
         
         if [ -s deleted_files.txt ]; then
-          for file in $(cat deleted_files.txt); do
+          while IFS= read -r file; do
             echo "Deleting resource using file: $file"
             docker run --rm -i \
               -v $GITHUB_WORKSPACE/.dataos:/dataos \
@@ -96,8 +90,8 @@ jobs:
               -e LICENSE_ORGANIZATION_ID=${{ secrets.LICENSE_ORGANIZATION_ID }} \
               -e DATAOS_FQDN=liberal-donkey.dataos.app \
               -e APIKEY=${{ env.API_KEY }} \
-              rubiklabs/dataos-ctl:2.10.9-dev delete -f /jobsfolder/$file
-          done
+              rubiklabs/dataos-ctl:2.10.9-dev delete --path $file
+          done < deleted_files.txt
         else
           echo "No resources to delete."
         fi
