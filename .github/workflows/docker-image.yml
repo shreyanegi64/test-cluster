@@ -80,7 +80,14 @@ jobs:
     - name: Identify deleted files
       id: find_deleted_files
       run: |
-        deleted_files=$(git log --diff-filter=D --summary | grep delete)
+        previous_commit=$(git rev-parse HEAD~1)
+        current_commit=$(git rev-parse HEAD)
+        echo "Previous commit: $previous_commit"
+        echo "Current commit: $current_commit"
+
+        echo "Listing changed files between the previous and current commit..."
+        changed_files=$(git log --diff-filter=D --summary | grep delete)
+        
         echo "Deleted Files"
         echo "$deleted_files"
 
