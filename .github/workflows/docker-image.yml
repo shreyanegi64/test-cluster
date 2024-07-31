@@ -83,7 +83,7 @@ jobs:
         with:
           output: ' '
 
-      - name: Insight into changed files
+    - name: Insight into changed files
         run: |
           echo "${{ steps.get_diff_files.outputs.files }}" > get_diff_files.txt
 
