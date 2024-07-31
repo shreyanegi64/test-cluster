@@ -80,16 +80,10 @@ jobs:
     - name: Identify deleted files
       id: find_deleted_files
       run: |
-        git log --diff-filter=D --summary | grep delete > deleted_files.txt
-        cat deleted_files.txt
-        
-        # if [ -s deleted_files.txt ]; then
-        #   echo "Deleted files detected:"
-        #   cat deleted_files.txt
-        #   echo "##[set-output name=deleted_files;]$(cat deleted_files.txt | awk '{print $2}' | tr '\n' ' ')"
-        # else
-        #   echo "No deleted files detected"
-        #   echo "##[set-output name=deleted_files;]none"
+        deleted_files=$(git log --diff-filter=D --summary | grep delete)
+        echo $deleted_files
+
+       
 
     - name: Delete resources
       id: delete-resources
